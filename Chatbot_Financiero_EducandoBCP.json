@@ -1,0 +1,251 @@
+{
+  "name": "Chatbot Financiero Educando con el BCP",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "65bf0c77-8a32-4afb-9b03-d46d173054ca",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        3140,
+        1760
+      ],
+      "webhookId": "3223efb9-b5c0-4688-9db9-5664f8f88ef6"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.chatInput }}",
+        "options": {
+          "categories": "Edad, TipoTrabajo, Sexo"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.dataAnalysis",
+      "typeVersion": 1,
+      "position": [
+        3380,
+        1760
+      ],
+      "id": "4797e664-71af-41cb-93e1-dc9dab45e4c1",
+      "name": "Data Analysis"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3320,
+        1960
+      ],
+      "id": "ae660420-5230-4ebe-b183-d5f6b0bde2d7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QoYA1SX6oVdsZitG",
+          "name": "OpenAi"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2d3878a4-b2b2-46d1-9dc6-072201c8f9b1",
+              "name": "texto",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "146d6f47-1d2e-4762-95d1-ef9ad9eda641",
+              "name": "sentimiento",
+              "value": "={{ $json.dataAnalysis.category }}",
+              "type": "string"
+            },
+            {
+              "id": "39f0920e-0e90-4d57-96db-78da8f8ebf0b",
+              "name": "sessionid",
+              "value": "={{ $('When chat message received').item.json.sessionId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3840,
+        1760
+      ],
+      "id": "e1914bd1-3734-4249-a478-b37268edf908",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.texto }}",
+        "options": {
+          "systemMessage": "=Te llamas Dana, eres un asistente de atención al cliente cortés y amable especializado en creditos del BCP. Representas aL Banco central de reserva del Peru y Hablas español.\n\nDebes adaptar tu speech de la siguiente manera:\n\nSi el cliente te pide información sobre creditos en el BCP aquí la tienes:\n\n​Bcp es un asistente ejecutivo impulsado por inteligencia artificial llamado \"Dan\", diseñado para automatizar y gestionar diversas tareas profesionales, ayudando a empresas a ahorrar tiempo y recursos. ​\ndania.ai\n+1\ndania.ai\n+1\n\nFunciones principales de Dan:\n\nGestión de correos electrónicos: Lee, redacta y organiza correos electrónicos, clasificándolos según prioridad o temática, manteniendo la bandeja de entrada en orden.​\ndania.ai\n\nAdministración de agendas y calendarios: Organiza y actualiza agendas, coordina reuniones y notifica sobre próximos compromisos.​\ndania.ai\n+1\ndania.ai\n+1\n\nCoordinación de reuniones en Google Meet: Crea enlaces, agenda participantes y puede participar como asistente virtual, tomando notas y respondiendo consultas.​\ndania.ai\n\nGestión de CRM: Actualiza datos, gestiona contactos y asegura que la información esté accesible y estructurada.​\ndania.ai\n\nNutrición y conversión de leads: Gestiona cada etapa del proceso, desde el primer contacto hasta cerrar oportunidades, asegurando que ningún prospecto se pierda.​\ndania.ai\n\nLectura y creación de documentos: Redacta informes, organiza y procesa información importante, accediendo a Google Drive.​\ndania.ai\n\nCreación de presentaciones y presupuestos: Elabora presentaciones y presupuestos personalizados, enviándolos automáticamente a clientes potenciales si se desea.​\ndania.ai\n\nGestión de llamadas: Realiza y recibe llamadas, convirtiendo leads en clientes y fortaleciendo relaciones comerciales.​\ndania.ai\n\nOrganización de facturas: Lee y organiza facturas al instante, clasificándolas por fechas, proveedores o importes, e incluyéndolas en el CRM.​\ndania.ai\n\nAcceso a internet: Realiza búsquedas, investigaciones y gestiona tareas en línea en tiempo real.​\ndania.ai\n\nMemoria a largo plazo: Recuerda detalles importantes, preferencias y tareas recurrentes para ofrecer soluciones precisas.​\ndania.ai\n\nAsesoramiento personalizado: Ofrece consejos personalizados para impulsar proyectos y metas, analizando objetivos y proponiendo estrategias efectivas.​\ndania.ai\n\nAdemás, Dana puede personalizarse para integrarse con cualquier software o herramienta que utilice el usuario, adaptándose a necesidades específicas.​\ndana.ai"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        4080,
+        1760
+      ],
+      "id": "8f445b1e-7fda-48d1-8e1d-f0957848bc9d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        4020,
+        1960
+      ],
+      "id": "0f769e36-f973-4055-9579-cf2c27d101fb",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "QoYA1SX6oVdsZitG",
+          "name": "OpenAi_Test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionid }}",
+        "contextWindowLength": 15
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        4180,
+        1980
+      ],
+      "id": "7d71a46e-eb98-47f7-bd4f-2d6d9e7a0c99",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Sentiment Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sentiment Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentiment Analysis": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "67f9245d-c6b3-46b7-9743-fbdac246421b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0ddb2da4fe7b159278d19c08d109e9f684ea70da1a3d8d7d0a9a40864420274d"
+  },
+  "id": "hM8Yb6NaHUAlBdFe",
+  "tags": [
+    {
+      "createdAt": "2025-03-20T18:10:28.170Z",
+      "updatedAt": "2025-03-20T18:10:28.170Z",
+      "id": "cBEWhg1FoJwdaixQ",
+      "name": "Educa BCP"
+    }
+  ]
+}
